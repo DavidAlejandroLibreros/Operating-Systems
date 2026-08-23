@@ -34,8 +34,9 @@ public class SJF_P extends Scheduler{
     @Override
     public void getNext(boolean cpuEmpty) {
         
-        //Insert code here
+        
+        }
 
      }
  
-}
+

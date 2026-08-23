@@ -57,7 +57,7 @@ public final class SystemOS implements Runnable{
         if(menu){
             menu();
         }else{
-            selectedScheduler = SchedulerType.FCFS;
+            selectedScheduler = SchedulerType.SJF_NP;
             simulation = 3; //Simpler2
         }
         
@@ -474,31 +474,56 @@ public final class SystemOS implements Runnable{
     }
     
     public double calcCPUUtilization() {
-        
-        return 0; // Mantiene el cálculo correcto
+        if (clock == 0) return 0;
+        return (double)(clock - cpucount) / clock;
     }
     
     public double calcTurnaroundTime() {
-        
-    
-        return 0;
+        int finished = 0;
+        double total = 0;
+        for (Process p : processes) {
+            if (p.getTime_finished() != -1) {
+                total += (p.getTime_finished() - p.getTime_init());
+                finished++;
+            }
+    }
+    return finished == 0 ? 0 : total / finished;
     }
     
     public double calcThroughput() {
-        if (processes.isEmpty()) return 0;
-    
-        return 0; // Procesos terminados por unidad de tiempo
+        if (clock == 0) return 0;
+        int finished = 0;
+        for (Process p : processes) {
+            if (p.getTime_finished() != -1) finished++;
+        }
+        return (double) finished / clock;
     }
     
     public double calcAvgWaitingTime() {
-           
-        return 0;
+        int finished = 0;
+        double total = 0;
+        for (Process p : processes) {
+            if (p.getTime_finished() != -1) {
+                int turnaround = p.getTime_finished() - p.getTime_init();
+                int waiting = turnaround - p.getTotalExecutionTime();
+                total += waiting;
+                finished++;
+            }
+        }
+        return finished == 0 ? 0 : total / finished;
     }
     
     //Everytime a process is taken out from memory, when a interruption occurs
     public double calcAvgContextSwitches() {
-        
-        return 0;
+        if (execution.isEmpty()) return 0;
+        int switches = (execution.get(0) != -1) ? 1 : 0;
+        for (int i = 1; i < execution.size(); i++) {
+            if (!execution.get(i).equals(execution.get(i - 1))) {
+                switches++;
+            }
+        }
+        long numProcesses = processes.stream().filter(p -> p.getTime_finished() != -1).count();
+        return numProcesses == 0 ? 0 : (double) switches / numProcesses;
     }
     
     
