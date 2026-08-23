@@ -13,10 +13,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-import static ur_os.SchedulerType.FAIR;
-import static ur_os.SchedulerType.PRIORITY;
-import static ur_os.SchedulerType.RR;
-import ur_os.CreateFile;
 import static ur_os.CreateFile.returnFile;
 
 
@@ -388,7 +384,7 @@ public final class SystemOS implements Runnable{
             } else {
                 tempID = temp_exec.getPid();
                 if (temp_exec.getFirstExecutionTime() == -1) {
-                    temp_exec.setFirstExecutionTime(clock);
+                    temp_exec.setFirstExecutionTime(clock - 1);
                 }
             }
             execution.add(tempID);
@@ -529,16 +525,31 @@ public final class SystemOS implements Runnable{
     
     //Just context switches based on the execution timeline
     public double calcAvgContextSwitches2() {
-        //Code here
-        return 0;
+        if (execution.isEmpty()) return 0;
+        int switches = (execution.get(0) != -1) ? 1 : 0;
+        for (int i = 1; i < execution.size(); i++) {
+            int prev = execution.get(i - 1); 
+            int curr = execution.get(i);   
+            if (curr != -1 && curr != prev) {
+                switches++;
+            }
+        }
+        return processes.isEmpty() ? 0 : (double) switches / processes.size();
     }
     
     
     public double calcResponseTime() {
-        //Code here
-        return 0;
-
+    int count = 0;
+    double total = 0;
+    for (Process p : processes) {
+        if (p.getFirstExecutionTime() != -1) {
+            total += (p.getFirstExecutionTime() - p.getTime_init());
+            count++;
+        }
     }
+    return count == 0 ? 0 : total / count;
+    }
+
     public void compareFiles(String filePath1, String filePath2) {
         try (BufferedReader reader1 = new BufferedReader(new FileReader(filePath1));
              BufferedReader reader2 = new BufferedReader(new FileReader(filePath2))) {
