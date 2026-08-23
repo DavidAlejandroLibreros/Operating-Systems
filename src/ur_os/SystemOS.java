@@ -529,13 +529,13 @@ public final class SystemOS implements Runnable{
     
     //Just context switches based on the execution timeline
     public double calcAvgContextSwitches2() {
-        
+        //Code here
         return 0;
     }
     
     
     public double calcResponseTime() {
-        
+        //Code here
         return 0;
 
     }
