@@ -16,7 +16,7 @@ public class RoundRobin extends Scheduler{
     
     RoundRobin(OS os){
         super(os);
-        q = 5;
+        q = 4; // Numero RR
         cont=0;
     }
     
@@ -39,7 +39,28 @@ public class RoundRobin extends Scheduler{
    
     @Override
     public void getNext(boolean cpuEmpty) {
-        //Insert code here
+        if(cpuEmpty){
+
+            if(!processes.isEmpty()){
+                Process next = processes.poll();
+                resetCounter();
+                os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, next);
+            }
+        } else {
+
+            cont++;
+            
+            if(cont >= q){
+
+                if(!processes.isEmpty()){
+                    Process next = processes.poll();
+                    resetCounter();
+                    os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, next);
+                } else {
+                    resetCounter();
+                }
+            }
+        }
     }
     
     

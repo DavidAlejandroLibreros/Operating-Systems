@@ -53,7 +53,7 @@ public final class SystemOS implements Runnable{
         if(menu){
             menu();
         }else{
-            selectedScheduler = SchedulerType.SJF_NP;
+            selectedScheduler = SchedulerType.RR; // Default scheduler
             simulation = 3; //Simpler2
         }
         
