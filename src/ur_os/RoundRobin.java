@@ -16,7 +16,6 @@ public class RoundRobin extends Scheduler{
     
     RoundRobin(OS os){
         super(os);
-        q = 4; // Numero RR
         cont=0;
     }
     
