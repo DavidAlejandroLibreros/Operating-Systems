@@ -1,0 +1,9 @@
+Summary of the logic you should write
+
+SJF_NP — when cpuEmpty is true: iterate through processes, find the one with the shortest getRemainingTimeInCurrentBurst() (using tieBreaker on ties), remove it with processes.remove(p) and os.interrupt(SCHEDULER_RQ_TO_CPU, p). newProcess/IOReturningProcess are left empty because it's not preemptive.
+
+SJF_P — same getNext, but also in newProcess/IOReturningProcess: if the CPU is not empty, compare os.getProcessInCPU().getRemainingTimeInCurrentBurst() against the value of the process that just arrived; if the new one is shorter, remove the one from the CPU (os.interrupt(SCHEDULER_CPU_TO_RQ, null)) so that it competes again in the next getNext.
+
+RoundRobin — if cpuEmpty: remove the first element from the queue (like FCFS), resetCounter(). If it's not empty: increment cont; if cont >= q, perform a context switch (remove the current element, add it back to the queue, take the next one) and reset.
+
+I also recommend opening PriorityQueue.java and MFQ.java (deliverable 2) to see that they already have constructors set up to expect RoundRobin as a sub-scheduler — this will help you understand how the entire system is connected.
