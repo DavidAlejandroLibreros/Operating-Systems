@@ -53,8 +53,8 @@ public final class SystemOS implements Runnable{
         if(menu){
             menu();
         }else{
-            selectedScheduler = SchedulerType.RR; // Default scheduler
-            simulation = 3; //Simpler2
+            selectedScheduler = SchedulerType.MFQ; // Default scheduler
+            simulation = 2; //Simpler2
         }
         
         readyqueue = new ReadyQueue(os,selectedScheduler);
