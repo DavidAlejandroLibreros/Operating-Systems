@@ -124,7 +124,6 @@ public class MFQ extends Scheduler{
             }
         }
     } //Non-preemtive in this event
-
     @Override
     public void IOReturningProcess(boolean cpuEmpty) {
 
