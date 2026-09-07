@@ -16,6 +16,8 @@ public class MFQ extends Scheduler{
     int currentScheduler;
     
     private ArrayList<Scheduler> schedulers;
+
+    private boolean preemptedFromOutside = false;
     //This may be a suggestion... you may use the current sschedulers to create the Multilevel Feedback Queue, or you may go with a more tradicional way
     //based on implementing all the queues in this class... it is your choice. Change all you need in this class.
     
@@ -43,11 +45,17 @@ public class MFQ extends Scheduler{
             newProcess(os.isCPUEmpty());
             
         } else if (estadoOriginal == ProcessState.CPU) {
-            int nivelActual = p.getCurrentScheduler();
-            int nuevoNivel = Math.min(nivelActual + 1, schedulers.size() - 1);
-            p.setCurrentScheduler(nuevoNivel);
-            schedulers.get(nuevoNivel).addProcess(p);
-            
+            if (preemptedFromOutside) {
+                preemptedFromOutside = false;                    // consumimos la bandera
+                int nivelActual = p.getCurrentScheduler();
+                schedulers.get(nivelActual).addProcess(p);        // vuelve a SU MISMO nivel, sin degradar
+            } else {
+                int nivelActual = p.getCurrentScheduler();
+                int nuevoNivel = Math.min(nivelActual + 1, schedulers.size() - 1);
+                p.setCurrentScheduler(nuevoNivel);
+                schedulers.get(nuevoNivel).addProcess(p);          // degradación normal
+            }  
+
         } else if (estadoOriginal == ProcessState.IO) {
             int nivelActual = p.getCurrentScheduler();
             int nivelAnterior = Math.max(nivelActual - 1, 0);
@@ -110,6 +118,7 @@ public class MFQ extends Scheduler{
         int nivelActual = os.getProcessInCPU().getCurrentScheduler();
         for (int nivel = 0; nivel < nivelActual; nivel++) {
             if (!schedulers.get(nivel).isEmpty()) {
+                preemptedFromOutside = true;
                 os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
                 return;
             }
@@ -123,6 +132,7 @@ public class MFQ extends Scheduler{
         int nivelActual = os.getProcessInCPU().getCurrentScheduler();
         for (int nivel = 0; nivel < nivelActual; nivel++) {
             if (!schedulers.get(nivel).isEmpty()) {
+                preemptedFromOutside = true;
                 os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
                 return;
             }
