@@ -1,5 +1,6 @@
 package ur_os;
 
+import java.io.File;
 import static ur_os.CreateFile.createSchedulerFile;
 import static ur_os.SchedulerType.FCFS;
 
@@ -33,10 +34,10 @@ public class ReadyQueue {
                 break;
             case PRIORITY:
                 s = new PriorityQueue(os,
-                        new RoundRobin(os, 9),
-                        new RoundRobin(os, 6),
-                        new RoundRobin(os, 3),
-                        new RoundRobin(os, 2));
+                        new RoundRobin(os, 9, false),
+                        new RoundRobin(os, 6, false),
+                        new RoundRobin(os, 3, false),
+                        new RoundRobin(os, 2, false));
                 createSchedulerFile("PRIORITY");
                 break;
             case MFQ:
